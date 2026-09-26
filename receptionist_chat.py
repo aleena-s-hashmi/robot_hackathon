@@ -10,8 +10,6 @@ setup(persona="receptionist_realistic") for the harder difficulty level.
 import argparse
 import sys
 
-
-
 from ohbot_kit import Ohbot, llm, make_listener, setup
 from ohbot_kit.voice import MicrophoneBlocked
 
@@ -29,6 +27,8 @@ def main():
     cfg, convo, robot_kwargs = setup(persona="receptionist")
     listener = make_listener(cfg) if args.voice else None
     convo.warm_up()
+
+    last_reply = None  # tracks the previous spoken line, to catch the model repeating itself
 
     print("Receptionist practice. Ctrl-C to stop.\n")
 
@@ -66,6 +66,20 @@ def main():
                 except llm.OllamaError as e:
                     print(f"[llm] {e}", file=sys.stderr)
                     continue
+
+                if action["say"] == last_reply or action["say"].strip().lower() == text.strip().lower():
+                    # Model got stuck repeating itself -- recover visibly rather
+                    # than showing the learner the exact same line twice, which
+                    # reads as broken and undermines "never feels like you said
+                    # it wrong."
+                    action = {
+                        "say": "Sorry, could you say that once more for me?",
+                        "emotion": "sympathetic",
+                        "gesture": "tilt",
+                        "gaze_x": 5,
+                        "gaze_y": 5,
+                    }
+                last_reply = action["say"]
 
                 print(f"Ohbot [{action['emotion']}/{action['gesture']}]: {action['say']}")
                 bot.gaze(action.get("gaze_x", 5), action.get("gaze_y", 5))
