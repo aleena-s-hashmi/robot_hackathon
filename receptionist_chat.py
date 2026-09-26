@@ -10,7 +10,7 @@ setup(persona="receptionist_realistic") for the harder difficulty level.
 import argparse
 import sys
 
-import _bootstrap  # noqa: F401
+
 
 from ohbot_kit import Ohbot, llm, make_listener, setup
 from ohbot_kit.voice import MicrophoneBlocked
