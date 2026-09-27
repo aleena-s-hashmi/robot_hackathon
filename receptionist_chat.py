@@ -8,6 +8,7 @@ setup(persona="receptionist_realistic") for the harder difficulty level.
 """
 
 import argparse
+import re
 import sys
 
 from ohbot_kit import Ohbot, llm, make_listener, setup
@@ -17,6 +18,17 @@ from ohbot_kit.voice import MicrophoneBlocked
 # a supportive listener, not a full emotional range.
 RECEPTIONIST_EMOTIONS = ["neutral", "happy", "curious", "sympathetic", "thinking"]
 RECEPTIONIST_GESTURES = ["nod", "slow_nod", "tilt", "lean_in", "perk_up", "blink"]
+
+
+def _is_echo(reply: str, user_text: str) -> bool:
+    """True if the model just handed the user's own words back to them,
+    allowing for small filler-word differences. Skipped for short replies,
+    where word overlap is likely coincidence rather than a real echo."""
+    strip = lambda s: re.sub(r"[^\w\s]", "", s.strip().lower())
+    r, u = strip(reply), strip(user_text)
+    if not r or len(r.split()) < 3:
+        return False
+    return r == u or r in u or u in r
 
 
 def main():
@@ -67,11 +79,10 @@ def main():
                     print(f"[llm] {e}", file=sys.stderr)
                     continue
 
-                if action["say"] == last_reply or action["say"].strip().lower() == text.strip().lower():
-                    # Model got stuck repeating itself -- recover visibly rather
-                    # than showing the learner the exact same line twice, which
-                    # reads as broken and undermines "never feels like you said
-                    # it wrong."
+                if action["say"] == last_reply or _is_echo(action["say"], text):
+                    # Model got stuck repeating itself or echoing the user --
+                    # recover visibly rather than showing the learner the same
+                    # line twice or their own words handed back to them.
                     action = {
                         "say": "Sorry, could you say that once more for me?",
                         "emotion": "sympathetic",
@@ -79,6 +90,11 @@ def main():
                         "gaze_x": 5,
                         "gaze_y": 5,
                     }
+                    # Keep the model's own memory consistent with what was
+                    # actually said -- otherwise the next turn is built on a
+                    # reply the user never heard.
+                    if convo.messages and convo.messages[-1]["role"] == "assistant":
+                        convo.messages[-1]["content"] = action["say"]
                 last_reply = action["say"]
 
                 print(f"Ohbot [{action['emotion']}/{action['gesture']}]: {action['say']}")
