@@ -31,7 +31,11 @@ FLOOR = 0.004  # absolute minimum, for very quiet rooms
 MODEL_SIZE = "base.en"
 
 # Biases the decoder toward the robot's name, which it otherwise mishears.
-NAME_HINT = "This is a conversation with Ohbot, a small desk robot."
+NAME_HINT = (
+    "This is a conversation with Ohbot, a small desk robot. "
+    "Write spoken appointment times as clock times: three thirty p.m. is 3:30 pm, "
+    "not 3.5 or 305 pm."
+)
 
 # Whisper reliably hallucinates these when fed near-silence.
 HALLUCINATIONS = {
