@@ -1,12 +1,44 @@
-# Ohbot Hackathon Kit
+# Ohbot AI and Robotics Hackathon project
 
-[![CI](https://github.com/liottandrea/robot_hackathon/actions/workflows/ci.yml/badge.svg)](https://github.com/liottandrea/robot_hackathon/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+An English-speaking companion that helps learners practise difficult real-world
+conversations face to face. The current scenario covers booking a GP appointment, but the
+idea can extend to job interviews, landlord conversations and other everyday situations.
 
-A desk robot that listens, thinks and reacts — with a face. Everything runs **locally**:
-no API keys, no internet, nothing leaves your laptop. (One exception: `streamlit_app.py`,
-the kids'-content demo control panel, calls Claude on Amazon Bedrock using the AWS CLI
-profile named in `config.yaml` — see below.)
+## Why we built it
+
+Many learners understand English but freeze when they must speak under pressure.
+Practising with a person can feel embarrassing, while a chatbot does not recreate a
+face-to-face conversation. Ohbot provides a safe step between practising alone and
+speaking to someone in the real world.
+
+This gives learners:
+
+- A safe space to make mistakes and try again.
+- Visible encouragement through nods and expressions.
+- Time to think without another person filling the silence.
+- Practice speaking aloud and taking turns.
+- More confidence for real conversations.
+
+In short: **a chatbot helps learners practise what to say; Ohbot helps them practise what
+it feels like to say it to someone.**
+
+## How it works
+
+Whisper transcribes the learner's speech locally. An interaction controller remembers key
+details and handles repetition, corrections and cancellation. Ohbot replies through
+text-to-speech, moving its mouth and using expressions, gaze and small nods to make the
+conversation feel responsive.
+
+The project also includes conversational examples powered by Microsoft's Phi-4-mini
+through Ollama. Whisper, Phi-4-mini and the receptionist controller run locally, keeping
+voice recordings, transcripts and personal details on the laptop. The separate
+kids'-content panel can optionally use Claude through Amazon Bedrock.
+
+## What is included
+
+The GP receptionist scenario can offer practice appointments, repeat questions, correct
+details and cancel a request. It is a simulation and does not connect to a real booking
+system. The repository also provides tools for building more English-practice scenarios.
 
 ```python
 from ohbot_kit import Ohbot, setup
@@ -37,6 +69,22 @@ python examples/01_hello_robot.py  # it should move and talk
 Run everything **from the repository root**.
 
 ## Then try this
+
+Run the GP receptionist with typed input:
+
+```bash
+python receptionist_chat.py
+```
+
+Or speak to it through the microphone:
+
+```bash
+python receptionist_chat.py --voice
+```
+
+The robot's blue eyes indicate that it is listening. Pause when you have finished speaking.
+
+Other included demonstrations:
 
 ```bash
 python examples/08_empathy_chat.py
@@ -104,7 +152,7 @@ editing it by hand.
 
 ## What it can do
 
-**Face and body** — 10 emotions, 12 gestures, coordinated looking (eyes lead, head
+**Face and body** — 15 emotions, 14 gestures, coordinated looking (eyes lead, head
 follows), backchannel nodding while *you* talk. All eight motors, including the head tilt
 that isn't in the vendor's docs.
 
@@ -135,16 +183,16 @@ LLM can make — the schema is built from those tables.
 python tools/check_empathy.py --robot
 ```
 
-Scores emotion choice against 12 labelled cases, performs them all on the robot, and
+Scores emotion choice against five labelled language-practice cases, performs them all on the robot, and
 verifies gestures actually overlap speech. `--repeats 3` shows which cases are unstable
 between runs — a single run is a sample, not a measurement.
 
 ## Layout
 
 ```text
-ohbot_kit/     the library          examples/   01-10
+ohbot_kit/     the library          examples/   01-11
 tools/         diagnostics          docs/       guides
-template.py    copy this to start   ohbot_chat.py  the full chat app
+template.py    copy this to start   receptionist_chat.py  GP practice app
 config.yaml    settings + personas
 ```
 

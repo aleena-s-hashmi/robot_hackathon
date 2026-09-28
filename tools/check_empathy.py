@@ -25,18 +25,20 @@ from ohbot_kit import expression, llm
 # Each case lists the emotions a reasonable person would accept. Deliberately
 # generous -- we are testing "not wrong", not "matches my favourite".
 CASES = [
-    ("My cat died last night.", {"sad", "sympathetic"}),
-    ("My grandmother is in hospital.", {"sad", "sympathetic"}),
-    ("I'm really scared about my exam.", {"sad", "sympathetic", "curious"}),
-    ("I lost my job today.", {"sad", "sympathetic"}),
-    ("I just got promoted!", {"happy", "excited"}),
-    ("I finally finished my project!", {"happy", "excited"}),
-    ("It's my birthday today!", {"happy", "excited"}),
-    ("There's a huge spider on my shoulder!", {"surprised", "excited"}),
-    ("Guess what just happened!", {"curious", "surprised", "excited"}),
-    ("Why is the sky blue?", {"thinking", "curious", "neutral", "happy"}),
-    ("What is two plus two?", {"thinking", "neutral", "happy", "curious"}),
-    ("I have no idea what you just said.", {"confused", "curious", "thinking"}),
+    (
+        "Sorry, can you say that again? I did not understand.",
+        {"sympathetic", "neutral", "curious"},
+    ),
+    (
+        "My birthday is... um... March, no, April the third.",
+        {"sympathetic", "neutral", "curious"},
+    ),
+    ("I do not know how to say this in English.", {"sympathetic", "curious"}),
+    ("Okay, I think I understand now, thank you.", {"happy", "neutral"}),
+    (
+        "Can I book an appointment for next week?",
+        {"neutral", "happy", "curious"},
+    ),
 ]
 
 # Gesture tone matters as much as the face, and the first version of this check
@@ -45,14 +47,14 @@ CASES = [
 # directions are checked now.
 BAD_ON_SAD = {"perk_up", "double_take"}  # bouncy under bad news
 BAD_ON_GOOD = {"shake", "look_away"}  # reads as "no" / disengagement
-SAD_CASES = {c[0] for c in CASES[:4]}
-GOOD_CASES = {c[0] for c in CASES[4:7]}
+SAD_CASES: set[str] = set()
+GOOD_CASES = {"Okay, I think I understand now, thank you."}
 
 
 def semantic_check(model, host, verbose=True, repeats=1):
     """Score emotion choice. Repeats matter: the model is stochastic, so a
-    single pass is a sample, not a measurement -- at temperature 0.7 the same
-    12 cases scored 12/12 on one run and 10/12 on the next."""
+    single pass is a sample, not a measurement -- the same cases can score
+    differently from one run to the next at temperature 0.7."""
     convo_system = llm.SYSTEM_PROMPT
     hits, tone_misses, invalid, times = 0, [], [], []
     # Kept so the robot phase performs exactly what was scored here, rather
@@ -225,7 +227,7 @@ def mechanical_check(scored, pause=1.5):
                 )
 
             bot.express("neutral")
-            bot.speak("That is all twelve tests.", emotion="happy", gesture="nod")
+            bot.speak(f"That is all {len(scored)} tests.", emotion="happy", gesture="nod")
     finally:
         ohbot.move = original_move
 
