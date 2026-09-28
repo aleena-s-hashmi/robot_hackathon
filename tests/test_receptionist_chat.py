@@ -4,7 +4,6 @@ from datetime import date
 
 from receptionist_chat import BookingState, _normalise_time, _spoken_time
 
-
 TODAY = date(2026, 9, 28)
 
 

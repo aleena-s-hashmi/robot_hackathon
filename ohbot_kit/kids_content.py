@@ -25,6 +25,7 @@ import anthropic
 from . import expression
 
 if TYPE_CHECKING:
+    from .config import Config
     from .robot import Ohbot
 
 # Cross-region inference profile id for Claude Haiku 4.5. Overridable via
@@ -43,8 +44,16 @@ MAX_TOKENS = 400
 PUNCHLINE_PAUSE_SECONDS = 0.9
 
 EXPRESSIONS = (
-    "happy", "surprised", "silly", "sleepy", "neutral",
-    "excited", "curious", "goofy", "mischievous", "sympathetic",
+    "happy",
+    "surprised",
+    "silly",
+    "sleepy",
+    "neutral",
+    "excited",
+    "curious",
+    "goofy",
+    "mischievous",
+    "sympathetic",
 )
 
 SEGMENT_SCHEMA = {
@@ -152,7 +161,9 @@ def generate(
     except anthropic.APITimeoutError as e:
         raise GenerationError("timed out waiting for a response") from e
     except anthropic.AuthenticationError as e:
-        raise GenerationError("authentication failed (check AWS credentials for the genai-agent-user profile)") from e
+        raise GenerationError(
+            "authentication failed (check AWS credentials for the genai-agent-user profile)"
+        ) from e
     except anthropic.RateLimitError as e:
         raise GenerationError("rate limited") from e
     except anthropic.BadRequestError as e:
@@ -192,11 +203,39 @@ def generate(
 # system prompt, not a substitute for it. Matched on whole words (not
 # substrings) so "classic" doesn't trip on "class".
 BLOCKLIST = (
-    "kill", "die", "dead", "death", "blood", "gun", "knife", "weapon",
-    "monster", "demon", "ghost", "witch", "scary", "scared", "frighten",
-    "terrify", "nightmare", "hurt", "pain", "attack", "fight", "war",
-    "explode", "explosion", "fire", "burn", "stab", "shoot", "hate",
-    "stupid", "dumb", "idiot", "ugly",
+    "kill",
+    "die",
+    "dead",
+    "death",
+    "blood",
+    "gun",
+    "knife",
+    "weapon",
+    "monster",
+    "demon",
+    "ghost",
+    "witch",
+    "scary",
+    "scared",
+    "frighten",
+    "terrify",
+    "nightmare",
+    "hurt",
+    "pain",
+    "attack",
+    "fight",
+    "war",
+    "explode",
+    "explosion",
+    "fire",
+    "burn",
+    "stab",
+    "shoot",
+    "hate",
+    "stupid",
+    "dumb",
+    "idiot",
+    "ugly",
 )
 
 
@@ -220,67 +259,98 @@ def filter_content(content: dict) -> list[str]:
 # perform() treats both identically.
 FALLBACK_LIBRARY: dict[str, list[dict]] = {
     "nursery rhyme": [
-        {"segments": [
-            {"text": "Hop, hop, hop went the little bunny,", "expression": "happy"},
-            {"text": "hopping down the lane so sunny.", "expression": "happy"},
-            {"text": "Then he stopped -- oh, what a sight!", "expression": "surprised"},
-            {"text": "A carrot patch, just his size, just right!", "expression": "silly"},
-        ]},
-        {"segments": [
-            {"text": "Twinkle, twinkle, robot bright,", "expression": "happy"},
-            {"text": "beeping softly through the night.", "expression": "sleepy"},
-            {"text": "Up above the world so high,", "expression": "surprised"},
-            {"text": "like a diamond in the sky.", "expression": "happy"},
-            {"text": "Twinkle, twinkle, off to bed,", "expression": "sleepy"},
-        ]},
-        {"segments": [
-            {"text": "Little duck went for a walk,", "expression": "happy"},
-            {"text": "quack quack quack, that's how ducks talk.", "expression": "silly"},
-            {"text": "Found a puddle, jumped right in,", "expression": "surprised"},
-            {"text": "what a splashy, happy grin!", "expression": "happy"},
-        ]},
+        {
+            "segments": [
+                {"text": "Hop, hop, hop went the little bunny,", "expression": "happy"},
+                {"text": "hopping down the lane so sunny.", "expression": "happy"},
+                {"text": "Then he stopped -- oh, what a sight!", "expression": "surprised"},
+                {"text": "A carrot patch, just his size, just right!", "expression": "silly"},
+            ]
+        },
+        {
+            "segments": [
+                {"text": "Twinkle, twinkle, robot bright,", "expression": "happy"},
+                {"text": "beeping softly through the night.", "expression": "sleepy"},
+                {"text": "Up above the world so high,", "expression": "surprised"},
+                {"text": "like a diamond in the sky.", "expression": "happy"},
+                {"text": "Twinkle, twinkle, off to bed,", "expression": "sleepy"},
+            ]
+        },
+        {
+            "segments": [
+                {"text": "Little duck went for a walk,", "expression": "happy"},
+                {"text": "quack quack quack, that's how ducks talk.", "expression": "silly"},
+                {"text": "Found a puddle, jumped right in,", "expression": "surprised"},
+                {"text": "what a splashy, happy grin!", "expression": "happy"},
+            ]
+        },
     ],
     "joke": [
-        {"segments": [
-            {"text": "Why did the robot go to school?", "expression": "neutral"},
-            {"text": "To improve its algo-rhythm!", "expression": "silly", "pause_before": True},
-            {"text": "Get it? Rhythm, like dancing?", "expression": "happy"},
-        ]},
-        {"segments": [
-            {"text": "What do you call a sleepy dinosaur?", "expression": "neutral"},
-            {"text": "A dino-snore!", "expression": "silly", "pause_before": True},
-            {"text": "Rawr... zzz.", "expression": "sleepy"},
-        ]},
-        {"segments": [
-            {"text": "Why don't robots ever panic?", "expression": "neutral"},
-            {"text": "They have nerves of steel!", "expression": "silly", "pause_before": True},
-            {"text": "Ha! Get it?", "expression": "happy"},
-        ]},
-        {"segments": [
-            {"text": "What did one wall say to the other?", "expression": "neutral"},
-            {"text": "I'll meet you at the corner!", "expression": "surprised", "pause_before": True},
-            {"text": "Ha ha, walls are so silly.", "expression": "silly"},
-        ]},
+        {
+            "segments": [
+                {"text": "Why did the robot go to school?", "expression": "neutral"},
+                {
+                    "text": "To improve its algo-rhythm!",
+                    "expression": "silly",
+                    "pause_before": True,
+                },
+                {"text": "Get it? Rhythm, like dancing?", "expression": "happy"},
+            ]
+        },
+        {
+            "segments": [
+                {"text": "What do you call a sleepy dinosaur?", "expression": "neutral"},
+                {"text": "A dino-snore!", "expression": "silly", "pause_before": True},
+                {"text": "Rawr... zzz.", "expression": "sleepy"},
+            ]
+        },
+        {
+            "segments": [
+                {"text": "Why don't robots ever panic?", "expression": "neutral"},
+                {"text": "They have nerves of steel!", "expression": "silly", "pause_before": True},
+                {"text": "Ha! Get it?", "expression": "happy"},
+            ]
+        },
+        {
+            "segments": [
+                {"text": "What did one wall say to the other?", "expression": "neutral"},
+                {
+                    "text": "I'll meet you at the corner!",
+                    "expression": "surprised",
+                    "pause_before": True,
+                },
+                {"text": "Ha ha, walls are so silly.", "expression": "silly"},
+            ]
+        },
     ],
     "story": [
-        {"segments": [
-            {"text": "Once there was a sleepy little cloud,", "expression": "sleepy"},
-            {"text": "who floated slowly over town.", "expression": "sleepy"},
-            {"text": "Then the sun peeked out and said hello!", "expression": "surprised"},
-            {"text": "The cloud woke up and smiled a big smile.", "expression": "happy"},
-        ]},
-        {"segments": [
-            {"text": "A tiny robot loved to sing,", "expression": "happy"},
-            {"text": "beep-boop songs about everything.", "expression": "silly"},
-            {"text": "One day it sang so very loud,", "expression": "surprised"},
-            {"text": "the whole garden danced along, proud!", "expression": "happy"},
-        ]},
-        {"segments": [
-            {"text": "A little star felt very small,", "expression": "sleepy"},
-            {"text": "hiding behind a cloud, that's all.", "expression": "sleepy"},
-            {"text": "Then it peeked out -- surprise, twinkle time!", "expression": "surprised"},
-            {"text": "Turns out small stars can still shine.", "expression": "happy"},
-        ]},
+        {
+            "segments": [
+                {"text": "Once there was a sleepy little cloud,", "expression": "sleepy"},
+                {"text": "who floated slowly over town.", "expression": "sleepy"},
+                {"text": "Then the sun peeked out and said hello!", "expression": "surprised"},
+                {"text": "The cloud woke up and smiled a big smile.", "expression": "happy"},
+            ]
+        },
+        {
+            "segments": [
+                {"text": "A tiny robot loved to sing,", "expression": "happy"},
+                {"text": "beep-boop songs about everything.", "expression": "silly"},
+                {"text": "One day it sang so very loud,", "expression": "surprised"},
+                {"text": "the whole garden danced along, proud!", "expression": "happy"},
+            ]
+        },
+        {
+            "segments": [
+                {"text": "A little star felt very small,", "expression": "sleepy"},
+                {"text": "hiding behind a cloud, that's all.", "expression": "sleepy"},
+                {
+                    "text": "Then it peeked out -- surprise, twinkle time!",
+                    "expression": "surprised",
+                },
+                {"text": "Turns out small stars can still shine.", "expression": "happy"},
+            ]
+        },
     ],
 }
 
@@ -291,7 +361,7 @@ def get_fallback(content_type: str) -> dict:
     return random.choice(options)
 
 
-def perform(bot: "Ohbot", content: dict, stop_event: threading.Event) -> None:
+def perform(bot: Ohbot, content: dict, stop_event: threading.Event) -> None:
     """Drive Ohbot through a segmented, expression-tagged performance.
 
     Format-agnostic: content has the same shape whether it came from
@@ -330,7 +400,7 @@ VOICE_PERSONA_FOR_TYPE = {
 }
 
 
-def voice_for_content_type(cfg, content_type: str, default_voice: str) -> str:
+def voice_for_content_type(cfg: Config, content_type: str, default_voice: str) -> str:
     """Reuse the storyteller/joker persona voices already defined in config.yaml."""
     persona_name = VOICE_PERSONA_FOR_TYPE.get(content_type, "storyteller")
     try:

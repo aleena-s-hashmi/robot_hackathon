@@ -24,6 +24,7 @@ whole conversation loop with no hardware.
 
 from __future__ import annotations
 
+import contextlib
 import random
 import threading
 import time
@@ -117,10 +118,8 @@ class Ohbot:
             # context manager has "exited". Closing it here is what
             # actually frees the port for someone else.
             if ohbot.ser is not None:
-                try:
+                with contextlib.suppress(Exception):
                     ohbot.ser.close()
-                except Exception:
-                    pass
             ohbot.connected = False
         return False
 

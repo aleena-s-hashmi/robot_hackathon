@@ -19,6 +19,7 @@ from dateutil import parser as date_parser
 from ohbot_kit import Ohbot, make_listener, setup
 from ohbot_kit.voice import MicrophoneBlocked
 
+
 def _action(say, emotion="neutral", gesture="nod", *, done=False):
     return {
         "say": say,
@@ -36,9 +37,26 @@ def _spoken_date(value: date) -> str:
 
 def _number_words(value: int) -> str:
     small = [
-        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-        "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
-        "seventeen", "eighteen", "nineteen",
+        "zero",
+        "one",
+        "two",
+        "three",
+        "four",
+        "five",
+        "six",
+        "seven",
+        "eight",
+        "nine",
+        "ten",
+        "eleven",
+        "twelve",
+        "thirteen",
+        "fourteen",
+        "fifteen",
+        "sixteen",
+        "seventeen",
+        "eighteen",
+        "nineteen",
     ]
     tens = {20: "twenty", 30: "thirty", 40: "forty", 50: "fifty"}
     if value < 20:
@@ -79,8 +97,14 @@ def _upcoming_slots(today: date) -> list[tuple[date, str]]:
 
 def _available_times(period: str | None = None) -> list[str]:
     times = [
-        "9:00 am", "9:30 am", "10:45 am", "11:30 am",
-        "2:00 pm", "2:30 pm", "3:45 pm", "4:15 pm",
+        "9:00 am",
+        "9:30 am",
+        "10:45 am",
+        "11:30 am",
+        "2:00 pm",
+        "2:30 pm",
+        "3:45 pm",
+        "4:15 pm",
     ]
     if period == "morning":
         times = [value for value in times if value.endswith("am")]
@@ -92,11 +116,9 @@ def _available_times(period: str | None = None) -> list[str]:
 def _normalise_time(text: str) -> str | None:
     """Turn common speech-to-text time forms into a natural clock time."""
     raw = text.lower().strip(" .,!?;")
-    raw = re.sub(
-        r"[, ]+(?:works|would work|please|okay|ok|is fine|is good)(?: for me)?$", "", raw
-    )
+    raw = re.sub(r"[, ]+(?:works|would work|please|okay|ok|is fine|is good)(?: for me)?$", "", raw)
+    raw = re.sub(r"^(?:it'?s\s+)?(?:at|about|around)\s+", "", raw)
     raw = re.sub(r"^(?:it'?s\s+)(?=\d)", "", raw)
-    raw = re.sub(r"^(?:at|about|around)\s+", "", raw)
     raw = re.sub(r"\ba\.?\s*m\.?$", "am", raw)
     raw = re.sub(r"\bp\.?\s*m\.?$", "pm", raw)
     cleaned = raw.replace(".", "")
@@ -129,8 +151,19 @@ def _normalise_time(text: str) -> str | None:
         word: number
         for number, word in enumerate(
             (
-                "zero", "one", "two", "three", "four", "five", "six",
-                "seven", "eight", "nine", "ten", "eleven", "twelve",
+                "zero",
+                "one",
+                "two",
+                "three",
+                "four",
+                "five",
+                "six",
+                "seven",
+                "eight",
+                "nine",
+                "ten",
+                "eleven",
+                "twelve",
             )
         )
     }
@@ -175,8 +208,22 @@ def _extract_name(text: str) -> str | None:
     if not 1 <= len(words) <= 4 or " ".join(words).lower() != cleaned.lower():
         return None
     blocked = {
-        "i", "im", "my", "it", "the", "this", "that", "we", "you", "yes", "no",
-        "turn", "book", "cancel", "repeat", "appointment",
+        "i",
+        "im",
+        "my",
+        "it",
+        "the",
+        "this",
+        "that",
+        "we",
+        "you",
+        "yes",
+        "no",
+        "turn",
+        "book",
+        "cancel",
+        "repeat",
+        "appointment",
     }
     if any(word.lower() in blocked for word in words):
         return None
@@ -287,6 +334,10 @@ class BookingState:
 
         if self.step == "confirmation" and re.search(r"\b(change|correct|different)\b", lowered):
             if re.search(r"\b(date|day)\b", lowered):
+                value = _parse_date(text, today, appointment=True)
+                if value is not None and value >= today:
+                    self.appointment_date = value
+                    return self.confirmation()
                 self.step = "change_date"
                 return _action("Of course. What new date would you like?", "curious", "tilt")
             if re.search(r"\btime\b", lowered):
@@ -358,7 +409,7 @@ class BookingState:
                 self.step = "slot_choice"
                 labels = ("first", "second", "third")
                 choices = []
-                for label, (slot_date, slot_time) in zip(labels, self.offered_slots):
+                for label, (slot_date, slot_time) in zip(labels, self.offered_slots, strict=True):
                     choices.append(
                         f"{label}, {slot_date.strftime('%A, %B')} {slot_date.day} "
                         f"at {_spoken_time(slot_time)}"

@@ -132,7 +132,10 @@ def _resample_linear(pcm: np.ndarray, src_rate: int, dst_rate: int) -> np.ndarra
         resampled = np.interp(dst_times, src_times, pcm.astype(np.float64))
     else:
         resampled = np.stack(
-            [np.interp(dst_times, src_times, pcm[:, ch].astype(np.float64)) for ch in range(pcm.shape[1])],
+            [
+                np.interp(dst_times, src_times, pcm[:, ch].astype(np.float64))
+                for ch in range(pcm.shape[1])
+            ],
             axis=1,
         )
     return resampled.astype(pcm.dtype)

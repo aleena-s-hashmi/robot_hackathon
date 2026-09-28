@@ -86,7 +86,15 @@ POSES = {
     "smug": {LIDBLINK: 6, HEADNOD: 5, EYETILT: 5, HEADROLL: 2, BOTTOMLIP: 6, TOPLIP: 3},
     # A sideways glance (EYETURN off-centre -- the one thing here that reads
     # as "sneaky") plus a small grin: the "I have a plan" face.
-    "mischievous": {LIDBLINK: 5, HEADNOD: 5, EYETILT: 4, HEADROLL: 6, EYETURN: 8, BOTTOMLIP: 6, TOPLIP: 4},
+    "mischievous": {
+        LIDBLINK: 5,
+        HEADNOD: 5,
+        EYETILT: 4,
+        HEADROLL: 6,
+        EYETURN: 8,
+        BOTTOMLIP: 6,
+        TOPLIP: 4,
+    },
 }
 
 # Axes that aim the face at the person. A pose may leave these off-centre for

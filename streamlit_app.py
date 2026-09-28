@@ -41,9 +41,9 @@ except Exception:
 import anthropic
 import sounddevice as sd
 import streamlit as st
+from ohbot import ohbot
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
-from ohbot import ohbot
 from ohbot_kit import audio, kids_content, llm, tts
 from ohbot_kit import config as config_mod
 from ohbot_kit.robot import Ohbot
@@ -105,71 +105,134 @@ class Runnable:
 
 
 EXAMPLES: tuple[Runnable, ...] = (
-    Runnable("ex01", "01 - Hello Robot", "examples/01_hello_robot.py",
-              "Move, speak, look around -- start here."),
-    Runnable("ex02", "02 - Expressions", "examples/02_expressions.py",
-              "The full catalogue of poses and gestures.",
-              args=(ArgSpec(kind="choice", label="Category",
-                             choices=("poses", "gestures", "looks")),)),
-    Runnable("ex03", "03 - Speech", "examples/03_speech.py",
-              "54 voices, speed, and how lip sync works.",
-              args=(
-                  ArgSpec(kind="flag", label="List voices only", flag="--list-voices"),
-                  ArgSpec(kind="text", label="Voice", flag="--voice", dynamic="voices"),
-              )),
-    Runnable("ex04", "04 - Chat (basic)", "examples/04_chat_basic.py",
-              "The smallest possible talking robot.", stdin=True),
-    Runnable("ex05", "05 - Personas", "examples/05_personas.py",
-              "One robot, different characters.",
-              args=(ArgSpec(kind="multi_choice", label="Personas to demo (default: all)",
-                             dynamic="personas"),)),
-    Runnable("ex06", "06 - Voice Chat", "examples/06_voice_chat.py",
-              "Talk to it with your real microphone."),
-    Runnable("ex07", "07 - Sensors", "examples/07_sensors.py",
-              "React to someone approaching -- needs a real sensor, runs forever."),
-    Runnable("ex08", "08 - Empathy Chat (flagship)", "examples/08_empathy_chat.py",
-              "Reacts with face and body, not just words.",
-              stdin=True,
-              args=(
-                  ArgSpec(kind="flag", label="Voice input", flag="--voice"),
-                  ArgSpec(kind="text", label="Model", flag="--model", suggestions=("phi4-mini",)),
-              )),
-    Runnable("ex09", "09 - Vision", "examples/09_vision.py",
-              "Webcam + a vision model describes what it sees.",
-              args=(
-                  ArgSpec(kind="text", label="Model", flag="--model",
-                          suggestions=("moondream", "qwen3.6:35b")),
-                  ArgSpec(kind="number", label="Interval (seconds)", flag="--interval", default="8"),
-                  ArgSpec(kind="number", label="Camera index", flag="--camera", default="0"),
-              )),
-    Runnable("ex10", "10 - Teams Call", "examples/10_teams_call.py",
-              "Sits in a call, answers when named -- needs audio routing set up first.",
-              args=(
-                  ArgSpec(kind="flag", label="List audio devices only", flag="--list-devices"),
-                  ArgSpec(kind="text", label="Model", flag="--model", suggestions=("phi4-mini",)),
-                  ArgSpec(kind="text", label="Input device", flag="--input", suggestions=("BlackHole 2ch",)),
-                  ArgSpec(kind="text", label="Output device", flag="--output", suggestions=("BlackHole 16ch",)),
-              )),
-    Runnable("ex11", "11 - Multi-beat", "examples/11_multi_beat.py",
-              "Expression that changes within a single reply.", stdin=True),
+    Runnable(
+        "ex01",
+        "01 - Hello Robot",
+        "examples/01_hello_robot.py",
+        "Move, speak, look around -- start here.",
+    ),
+    Runnable(
+        "ex02",
+        "02 - Expressions",
+        "examples/02_expressions.py",
+        "The full catalogue of poses and gestures.",
+        args=(ArgSpec(kind="choice", label="Category", choices=("poses", "gestures", "looks")),),
+    ),
+    Runnable(
+        "ex03",
+        "03 - Speech",
+        "examples/03_speech.py",
+        "54 voices, speed, and how lip sync works.",
+        args=(
+            ArgSpec(kind="flag", label="List voices only", flag="--list-voices"),
+            ArgSpec(kind="text", label="Voice", flag="--voice", dynamic="voices"),
+        ),
+    ),
+    Runnable(
+        "ex04",
+        "04 - Chat (basic)",
+        "examples/04_chat_basic.py",
+        "The smallest possible talking robot.",
+        stdin=True,
+    ),
+    Runnable(
+        "ex05",
+        "05 - Personas",
+        "examples/05_personas.py",
+        "One robot, different characters.",
+        args=(
+            ArgSpec(
+                kind="multi_choice", label="Personas to demo (default: all)", dynamic="personas"
+            ),
+        ),
+    ),
+    Runnable(
+        "ex06",
+        "06 - Voice Chat",
+        "examples/06_voice_chat.py",
+        "Talk to it with your real microphone.",
+    ),
+    Runnable(
+        "ex07",
+        "07 - Sensors",
+        "examples/07_sensors.py",
+        "React to someone approaching -- needs a real sensor, runs forever.",
+    ),
+    Runnable(
+        "ex08",
+        "08 - Empathy Chat (flagship)",
+        "examples/08_empathy_chat.py",
+        "Reacts with face and body, not just words.",
+        stdin=True,
+        args=(
+            ArgSpec(kind="flag", label="Voice input", flag="--voice"),
+            ArgSpec(kind="text", label="Model", flag="--model", suggestions=("phi4-mini",)),
+        ),
+    ),
+    Runnable(
+        "ex09",
+        "09 - Vision",
+        "examples/09_vision.py",
+        "Webcam + a vision model describes what it sees.",
+        args=(
+            ArgSpec(
+                kind="text", label="Model", flag="--model", suggestions=("moondream", "qwen3.6:35b")
+            ),
+            ArgSpec(kind="number", label="Interval (seconds)", flag="--interval", default="8"),
+            ArgSpec(kind="number", label="Camera index", flag="--camera", default="0"),
+        ),
+    ),
+    Runnable(
+        "ex10",
+        "10 - Teams Call",
+        "examples/10_teams_call.py",
+        "Sits in a call, answers when named -- needs audio routing set up first.",
+        args=(
+            ArgSpec(kind="flag", label="List audio devices only", flag="--list-devices"),
+            ArgSpec(kind="text", label="Model", flag="--model", suggestions=("phi4-mini",)),
+            ArgSpec(
+                kind="text", label="Input device", flag="--input", suggestions=("BlackHole 2ch",)
+            ),
+            ArgSpec(
+                kind="text", label="Output device", flag="--output", suggestions=("BlackHole 16ch",)
+            ),
+        ),
+    ),
+    Runnable(
+        "ex11",
+        "11 - Multi-beat",
+        "examples/11_multi_beat.py",
+        "Expression that changes within a single reply.",
+        stdin=True,
+    ),
 )
 
 FULL_APP: tuple[Runnable, ...] = (
-    Runnable("ohbot_chat", "ohbot_chat.py", "ohbot_chat.py",
-              "The full chat app: persona, voice, and reply mode.",
-              stdin=True,
-              args=(
-                  ArgSpec(kind="choice", label="Persona", flag="--persona", dynamic="personas"),
-                  ArgSpec(kind="flag", label="Voice input", flag="--voice"),
-                  ArgSpec(kind="flag", label="Camera (let it see you)", flag="--camera"),
-                  ArgSpec(kind="choice", label="Mode", flag="--mode",
-                          choices=("empathy", "beats", "plain")),
-                  ArgSpec(kind="text", label="Model", flag="--model",
-                          suggestions=("phi4-mini",), dynamic="ollama_models"),
-                  ArgSpec(kind="flag", label="List audio devices only", flag="--list-devices"),
-              ),
-              advanced_hint="--speed 1.4 | --voice-name af_sky | --max-sentences 3",
-              chat_transcript=True),
+    Runnable(
+        "ohbot_chat",
+        "ohbot_chat.py",
+        "ohbot_chat.py",
+        "The full chat app: persona, voice, and reply mode.",
+        stdin=True,
+        args=(
+            ArgSpec(kind="choice", label="Persona", flag="--persona", dynamic="personas"),
+            ArgSpec(kind="flag", label="Voice input", flag="--voice"),
+            ArgSpec(kind="flag", label="Camera (let it see you)", flag="--camera"),
+            ArgSpec(
+                kind="choice", label="Mode", flag="--mode", choices=("empathy", "beats", "plain")
+            ),
+            ArgSpec(
+                kind="text",
+                label="Model",
+                flag="--model",
+                suggestions=("phi4-mini",),
+                dynamic="ollama_models",
+            ),
+            ArgSpec(kind="flag", label="List audio devices only", flag="--list-devices"),
+        ),
+        advanced_hint="--speed 1.4 | --voice-name af_sky | --max-sentences 3",
+        chat_transcript=True,
+    ),
 )
 
 
@@ -343,7 +406,9 @@ def _worker(
         st.session_state.status = "idle"
 
 
-def start_request(bot, client, character, topic, content_type, model, use_fallback, persona=None) -> None:
+def start_request(
+    bot, client, character, topic, content_type, model, use_fallback, persona=None
+) -> None:
     st.session_state.request_id += 1
     my_request_id = st.session_state.request_id
     stop_event = threading.Event()
@@ -357,8 +422,16 @@ def start_request(bot, client, character, topic, content_type, model, use_fallba
     thread = threading.Thread(
         target=_worker,
         args=(
-            bot, client, character, topic, content_type, model,
-            my_request_id, stop_event, use_fallback, persona,
+            bot,
+            client,
+            character,
+            topic,
+            content_type,
+            model,
+            my_request_id,
+            stop_event,
+            use_fallback,
+            persona,
         ),
         daemon=True,
     )
@@ -405,7 +478,9 @@ def render_kids_content() -> None:
     model = cfg.get("kids_content.model", kids_content.DEFAULT_MODEL)
 
     status_box = st.empty()
-    status_box.markdown(f"**Status:** {STATUS_LABELS.get(st.session_state.status, st.session_state.status)}")
+    status_box.markdown(
+        f"**Status:** {STATUS_LABELS.get(st.session_state.status, st.session_state.status)}"
+    )
 
     if robot_error:
         st.error(robot_error)
@@ -418,7 +493,9 @@ def render_kids_content() -> None:
     st.session_state["robot_connected"] = True
 
     if llm_error:
-        st.warning(f"{llm_error} -- \"Generate & Perform\" is disabled; \"Use fallback instead\" still works.")
+        st.warning(
+            f'{llm_error} -- "Generate & Perform" is disabled; "Use fallback instead" still works.'
+        )
 
     if st.session_state.status == "error" and st.session_state.error_message:
         st.error(st.session_state.error_message)
@@ -436,11 +513,29 @@ def render_kids_content() -> None:
     col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Generate & Perform", disabled=busy or client is None, type="primary"):
-            start_request(bot, client, character, topic, content_type, model, use_fallback=False, persona=persona)
+            start_request(
+                bot,
+                client,
+                character,
+                topic,
+                content_type,
+                model,
+                use_fallback=False,
+                persona=persona,
+            )
             st.rerun()
     with col2:
         if st.button("Use fallback instead"):
-            start_request(bot, client, character, topic, content_type, model, use_fallback=True, persona=persona)
+            start_request(
+                bot,
+                client,
+                character,
+                topic,
+                content_type,
+                model,
+                use_fallback=True,
+                persona=persona,
+            )
             st.rerun()
     with col3:
         if st.button("Stop", disabled=not busy):
@@ -558,7 +653,9 @@ def render_args(entry: Runnable, cfg: config_mod.Config, disabled: bool) -> list
 
         elif spec.kind == "choice":
             choices = _resolve_choices(spec, cfg)
-            value = st.selectbox(spec.label, ["(default)", *choices], disabled=disabled, key=widget_key)
+            value = st.selectbox(
+                spec.label, ["(default)", *choices], disabled=disabled, key=widget_key
+            )
             if value != "(default)":
                 if spec.flag:
                     argv.extend([spec.flag, value])
@@ -573,10 +670,14 @@ def render_args(entry: Runnable, cfg: config_mod.Config, disabled: bool) -> list
         elif spec.kind == "text":
             suggestions = _resolve_choices(spec, cfg) or spec.suggestions
             options = ["(default)", *suggestions, "Custom..."]
-            picked = st.selectbox(spec.label, options, disabled=disabled, key=f"{widget_key}_select")
+            picked = st.selectbox(
+                spec.label, options, disabled=disabled, key=f"{widget_key}_select"
+            )
             value = picked
             if picked == "Custom...":
-                value = st.text_input(f"{spec.label} (custom)", disabled=disabled, key=f"{widget_key}_custom")
+                value = st.text_input(
+                    f"{spec.label} (custom)", disabled=disabled, key=f"{widget_key}_custom"
+                )
             if value and value not in ("(default)", "Custom..."):
                 if spec.flag:
                     argv.extend([spec.flag, value])
@@ -585,7 +686,11 @@ def render_args(entry: Runnable, cfg: config_mod.Config, disabled: bool) -> list
 
         elif spec.kind == "number":
             value = st.number_input(
-                spec.label, value=float(spec.default), step=spec.step, disabled=disabled, key=widget_key
+                spec.label,
+                value=float(spec.default),
+                step=spec.step,
+                disabled=disabled,
+                key=widget_key,
             )
             if value != float(spec.default):
                 argv.extend([spec.flag, str(value)])
@@ -627,7 +732,10 @@ def render_runner(entry: Runnable) -> None:
 
     argv = render_args(entry, get_config(), disabled=running)
     advanced = st.text_input(
-        "Other args (advanced)", placeholder=entry.advanced_hint, disabled=running, key=f"args_{entry.key}"
+        "Other args (advanced)",
+        placeholder=entry.advanced_hint,
+        disabled=running,
+        key=f"args_{entry.key}",
     )
 
     col1, col2 = st.columns(2)
@@ -645,9 +753,8 @@ def render_runner(entry: Runnable) -> None:
         if st.button("Send", key=f"send_{entry.key}") and line:
             send_line(line)
 
-    if "--camera" in argv and running:
-        if st.button("Take a picture", key=f"photo_{entry.key}"):
-            send_line("/look")
+    if "--camera" in argv and running and st.button("Take a picture", key=f"photo_{entry.key}"):
+        send_line("/look")
 
     if entry.chat_transcript:
         st.caption("Last messages")
@@ -673,7 +780,9 @@ def render_runner(entry: Runnable) -> None:
 
 def _device_options(kind: str) -> list[tuple[str, str | None]]:
     """[(label, name-or-None)] for a selectbox; None means "system default"."""
-    return [("System default", None)] + [(info["name"], info["name"]) for _, info in audio.devices(kind)]
+    return [("System default", None)] + [
+        (info["name"], info["name"]) for _, info in audio.devices(kind)
+    ]
 
 
 def render_audio_sidebar() -> None:
@@ -710,9 +819,14 @@ def render_audio_sidebar() -> None:
 
             picked = st.selectbox(widget_label, labels, index=index, key=f"select_{session_key}")
             if picked == "Custom...":
-                new_value = st.text_input(
-                    f"{widget_label} name (substring)", value=current or "", key=f"custom_{session_key}"
-                ) or None
+                new_value = (
+                    st.text_input(
+                        f"{widget_label} name (substring)",
+                        value=current or "",
+                        key=f"custom_{session_key}",
+                    )
+                    or None
+                )
             else:
                 new_value = next(name for label, name in options if label == picked)
 

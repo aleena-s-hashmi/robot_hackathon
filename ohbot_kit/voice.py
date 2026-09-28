@@ -140,7 +140,10 @@ class Listener:
         print("Calibrating microphone, stay quiet...", flush=True)
         levels = []
         with sd.InputStream(
-            samplerate=self.capture_rate, channels=1, blocksize=self.capture_block, device=self.device
+            samplerate=self.capture_rate,
+            channels=1,
+            blocksize=self.capture_block,
+            device=self.device,
         ) as stream:
             deadline = time.time() + CALIBRATION_SECONDS
             while time.time() < deadline:
@@ -180,7 +183,10 @@ class Listener:
         max_frames = int(MAX_UTTERANCE_SECONDS * SAMPLE_RATE / BLOCK)
 
         with sd.InputStream(
-            samplerate=self.capture_rate, channels=1, blocksize=self.capture_block, device=self.device
+            samplerate=self.capture_rate,
+            channels=1,
+            blocksize=self.capture_block,
+            device=self.device,
         ) as stream:
             while True:
                 block, overflowed = stream.read(self.capture_block)

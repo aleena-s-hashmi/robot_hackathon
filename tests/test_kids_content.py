@@ -92,9 +92,7 @@ class TestPerform:
         segment position, mirroring ohbot_chat.py's beats mode."""
         played: list[str] = []
         monkeypatch.setattr(bot, "gesture", lambda name, **kw: played.append(name))
-        content = {
-            "segments": [{"text": t, "expression": "silly"} for t in ("a", "b", "c")]
-        }
+        content = {"segments": [{"text": t, "expression": "silly"} for t in ("a", "b", "c")]}
         kc.perform(bot, content, threading.Event())
         suited = ex.gestures_for("silly")
         assert played == [suited[i % len(suited)] for i in range(3)]

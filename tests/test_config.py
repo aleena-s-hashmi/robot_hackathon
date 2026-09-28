@@ -121,7 +121,8 @@ class TestUpdateLocal:
         )
         config_mod.update_local({"audio": {"output_device": "MacBook Pro Speakers"}}, local)
 
-        text = open(local).read()
+        with open(local) as local_file:
+            text = local_file.read()
         assert "# Machine-specific notes." in text
         assert "# More notes." in text
 
@@ -142,6 +143,7 @@ class TestUpdateLocal:
         local = write(tmp_path, "config.local.yaml", "audio:\n  output_device: Plantronics\n")
         config_mod.update_local({"audio": {"output_device": None}}, local)
 
-        assert "output_device: null" in open(local).read()
+        with open(local) as local_file:
+            assert "output_device: null" in local_file.read()
         cfg = config_mod.load(None, local, warn=False)
         assert cfg.get("audio.output_device", "fallback") == "fallback"

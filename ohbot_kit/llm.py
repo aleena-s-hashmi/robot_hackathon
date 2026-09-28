@@ -186,7 +186,7 @@ class Conversation:
         between requests.
         """
         if len(self.messages) > MAX_HISTORY_MESSAGES:
-            del self.messages[: -MAX_HISTORY_MESSAGES]
+            del self.messages[:-MAX_HISTORY_MESSAGES]
 
     def warm_up(self) -> None:
         """Force the model to load now, so the first real reply isn't slow."""
@@ -210,12 +210,13 @@ class Conversation:
     def _raw_stream(self, out: queue.Queue[Any]) -> None:
         """Producer: push response fragments onto the queue, then a None sentinel."""
         if self.provider == "bedrock":
+            assert self._bedrock_client is not None
             try:
                 with self._bedrock_client.messages.stream(
                     model=self.model,
                     max_tokens=self.num_predict,
                     system=self.system,
-                    messages=self.messages,
+                    messages=self.messages,  # type: ignore[arg-type]
                     extra_body={"temperature": self.temperature},
                 ) as stream:
                     for fragment in stream.text_stream:
@@ -328,8 +329,11 @@ class Conversation:
         keeps the mistake-recovery decision next to the mistake).
         """
         if self.provider == "bedrock":
+            assert self._bedrock_client is not None
             try:
-                response = self._bedrock_client.messages.create(
+                # The SDK's typed overload cannot express Bedrock's custom
+                # JSON-schema output_config passed through to the service.
+                response = self._bedrock_client.messages.create(  # type: ignore[call-overload]
                     model=self.model,
                     max_tokens=num_predict,
                     system=system,
@@ -492,7 +496,10 @@ class Conversation:
 
         try:
             parsed = self._structured_call(
-                system, schema, self.num_predict * 2, temperature  # room for several sentences
+                system,
+                schema,
+                self.num_predict * 2,
+                temperature,  # room for several sentences
             )
         except OllamaError:
             self.messages.pop()

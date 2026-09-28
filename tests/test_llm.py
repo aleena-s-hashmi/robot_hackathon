@@ -138,9 +138,7 @@ class TestStreamSentences:
         TIMEOUT and stayed broken -- popping only the failed turn never
         removed the bloat that caused the failure."""
         convo = llm.Conversation()
-        with mock.patch.object(
-            llm.requests, "post", return_value=_stream_response(["Reply."])
-        ):
+        with mock.patch.object(llm.requests, "post", return_value=_stream_response(["Reply."])):
             for i in range(20):
                 list(convo.stream_sentences(f"message {i}"))
         assert len(convo.messages) <= llm.MAX_HISTORY_MESSAGES
