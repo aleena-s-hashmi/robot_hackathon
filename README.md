@@ -1,17 +1,19 @@
 # Ohbot AI and Robotics Hackathon project
 
-An English-speaking companion that helps learners practise difficult real-world
+an english-speaking companion that helps learners practise difficult real-world
 conversations face to face. The current scenario covers booking a GP appointment, but the
 idea can extend to job interviews, landlord conversations and other everyday situations.
 
-## Why we built it
+<img width="1152" height="2048" alt="WhatsApp Image 2026-09-28 at 4 19 48 PM" src="https://github.com/user-attachments/assets/e7846839-02ce-4c2d-8070-c9a21616cbcd" />
 
-Many learners understand English but freeze when they must speak under pressure.
+## why we built it
+
+many learners understand English but freeze when they must speak under pressure.
 Practising with a person can feel embarrassing, while a chatbot does not recreate a
 face-to-face conversation. Ohbot provides a safe step between practising alone and
 speaking to someone in the real world.
 
-This gives learners:
+this gives learners:
 
 - A safe space to make mistakes and try again.
 - Visible encouragement through nods and expressions.
@@ -19,10 +21,10 @@ This gives learners:
 - Practice speaking aloud and taking turns.
 - More confidence for real conversations.
 
-In short: **a chatbot helps learners practise what to say; Ohbot helps them practise what
+basically: **a chatbot helps learners practise what to say; Ohbot helps them practise what
 it feels like to say it to someone.**
 
-## How it works
+## how it works
 
 Whisper transcribes the learner's speech locally. An interaction controller remembers key
 details and handles repetition, corrections and cancellation. Ohbot replies through
@@ -34,7 +36,7 @@ through Ollama. Whisper, Phi-4-mini and the receptionist controller run locally,
 voice recordings, transcripts and personal details on the laptop. The separate
 kids'-content panel can optionally use Claude through Amazon Bedrock.
 
-## What is included
+## what is included
 
 The GP receptionist scenario can offer practice appointments, repeat questions, correct
 details and cancel a request. It is a simulation and does not connect to a real booking
@@ -51,7 +53,7 @@ with Ohbot(**robot_kwargs) as bot:
 The robot speaks **and moves at the same time** — the gesture plays underneath the audio,
 which is the difference between a robot and a speaker with a face.
 
-## Quickstart
+## quickstart
 
 Full instructions, including Windows: **[docs/SETUP.md](docs/SETUP.md)**
 
@@ -68,7 +70,7 @@ python examples/01_hello_robot.py  # it should move and talk
 
 Run everything **from the repository root**.
 
-## Then try this
+## then try this
 
 Run the GP receptionist with typed input:
 
@@ -98,14 +100,14 @@ python examples/11_multi_beat.py             # expression changes mid-reply
 python examples/02_expressions.py            # every pose and gesture, demonstrated
 ```
 
-## Start building
+## start building
 
 ```bash
 cp template.py my_project.py
 python my_project.py
 ```
 
-| Where | What |
+| where | what |
 | --- | --- |
 | **[docs/API.md](docs/API.md)** | Every call, pose, gesture and motor. Keep it open. |
 | **[docs/CHALLENGES.md](docs/CHALLENGES.md)** | Project ideas, easy → ambitious, if you're still deciding |
@@ -113,7 +115,7 @@ python my_project.py
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Every failure we hit, and its fix |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How it works, and why some odd-looking things are load-bearing |
 
-## Examples
+## examples
 
 Numbered in the order worth reading them.
 
@@ -150,7 +152,7 @@ hardware, same as running them from a terminal. Pick a category from the sidebar
 input/output devices from the browser (persisted to `config.local.yaml`), instead of
 editing it by hand.
 
-## What it can do
+## what it can do
 
 **Face and body** — 15 emotions, 14 gestures, coordinated looking (eyes lead, head
 follows), backchannel nodding while *you* talk. All eight motors, including the head tilt
@@ -165,7 +167,7 @@ that isn't in the vendor's docs.
 Add a pose or gesture to `ohbot_kit/expression.py` and it immediately becomes a choice the
 LLM can make — the schema is built from those tables.
 
-## Notes on the underlying `ohbot` library
+## notes on the underlying `ohbot` library
 
 - Lip sync comes from the `ohbot` Python library's `say()` call (used internally by
   `bot.speak()`) and is on by default. Which voices are available depends on your
@@ -177,7 +179,7 @@ LLM can make — the schema is built from those tables.
   stop button, calling `ohbot.reset()` yourself to de-energise the motors is good practice
   — it isn't necessary for the event, but it saves motor wear.
 
-## Is it working properly?
+## is it working properly?
 
 ```bash
 python tools/check_empathy.py --robot
@@ -187,7 +189,7 @@ Scores emotion choice against five labelled language-practice cases, performs th
 verifies gestures actually overlap speech. `--repeats 3` shows which cases are unstable
 between runs — a single run is a sample, not a measurement.
 
-## Layout
+## layout
 
 ```text
 ohbot_kit/     the library          examples/   01-11
@@ -198,7 +200,7 @@ config.yaml    settings + personas
 
 Machine-specific settings (audio devices) go in `config.local.yaml`, which is git-ignored.
 
-## Contributing
+## contributing
 
 ```bash
 pip install -r requirements.txt -r requirements-dev.txt
