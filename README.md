@@ -4,7 +4,7 @@ an english-speaking companion that helps learners practise difficult real-world
 conversations face to face. The current scenario covers booking a GP appointment, but the
 idea can extend to job interviews, landlord conversations and other everyday situations.
 
-<img width="1152" height="2048" alt="WhatsApp Image 2026-09-28 at 4 19 48 PM" src="https://github.com/user-attachments/assets/e7846839-02ce-4c2d-8070-c9a21616cbcd" />
+<img width="1152" height="1715" alt="WhatsApp Image 2026-09-28 at 4 19 48 PM" src="https://github.com/user-attachments/assets/9278206f-aea4-40ed-a441-d10b69f502d6" />
 
 ## why we built it
 
