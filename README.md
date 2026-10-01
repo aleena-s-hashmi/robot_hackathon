@@ -213,4 +213,9 @@ The test suite fakes the hardware, so it runs anywhere. See
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) before changing anything that looks odd —
 several strange-looking things are load-bearing.
 
-Licensed under [Apache 2.0](LICENSE). Third-party components are listed in [NOTICE](NOTICE).
+Based on the [Leeds Robot Hackathon project](https://github.com/liottandrea/leeds_robot_hackathon),
+originally developed at UST, with subsequent modifications by this project's
+contributors.
+
+Licensed under [Apache 2.0](LICENSE). Copyright, attribution, modification, and
+third-party notices are listed in [NOTICE](NOTICE).
